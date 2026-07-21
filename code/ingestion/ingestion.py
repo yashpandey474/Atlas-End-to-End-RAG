@@ -3,10 +3,12 @@ from pathlib import Path
 import json
 from model.document import Chunk, Document
 
-def build_chunk_id(document: Document)
+def build_chunk_id(document: Document, chunk_number: int) -> str:
+    return f"{document.source}_page{document.page}_chunk{chunk_number}"
+
 def chunk_document(document: Document, overlap: int, chunk_size: int) -> list[Chunk]:
     chunks: list[Chunk] = []
-    curr_id = 0
+    curr_chunk_num = 0
 
     if not document.text:
         print(f"Received empty document {document} to chunk")
@@ -18,14 +20,14 @@ def chunk_document(document: Document, overlap: int, chunk_size: int) -> list[Ch
     i = 0
     while i < len(document.text):
         chunk = Chunk(
-            id=curr_id,
+            id=build_chunk_id(document=document, chunk_number=curr_chunk_num),
             text=document.text[i: i + chunk_size],
             source=document.source,
             page=document.page
         )
         chunks.append(chunk)
 
-        curr_id += 1
+        curr_chunk_num += 1
         i += chunk_size - overlap
 
     print(f"For document with source {document.source} and page {document.page} - created {len(chunks)} chunks")
