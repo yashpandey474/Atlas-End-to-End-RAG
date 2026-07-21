@@ -1,7 +1,8 @@
 import fitz
 from pathlib import Path
-from model.document import Document
+from code.model.document import Document
 import json
+from dataclasses import asdict
 
 def parse_pdf(pdf_filepath: str, pdf_filename: str) -> list[Document]:
     # open the pdf
@@ -19,7 +20,7 @@ def parse_pdf(pdf_filepath: str, pdf_filename: str) -> list[Document]:
     return current_documents
 
 def parse_folder_pdfs(
-    raw_data_folder_pathname: str = "../../Data/raw"
+    raw_data_folder_pathname: str = "../Data/raw"
 ):
     documents = []
     raw_data_folder = Path(raw_data_folder_pathname)
@@ -30,7 +31,7 @@ def parse_folder_pdfs(
     return documents
 
 def save_parsed_pdfs(
-    data_folderpath = "../../Data/",
+    data_folderpath = "Data/",
     raw_data_folderame = "raw",
     processed_data_foldername = "processed"
 ):
@@ -44,17 +45,19 @@ def save_parsed_pdfs(
             raw_data_filepath = raw_data_folderpath + "/" + f.name
 
             # parse the pdf
-            pdf_documents = parse_pdf(raw_data_filepath)
+            pdf_documents = parse_pdf(raw_data_filepath, f.name)
 
             if not pdf_documents:
                 print(f"Could not parse any documents for file: {raw_data_filepath}")
                 continue
 
             # save into json
-            processed_data_filepath = processed_data_folderpath + "/" + pdf_documents[0].source
+            processed_data_filepath = processed_data_folderpath + "/" + pdf_documents[0].source[:-3] + "json"
 
-            with open(processed_data_filepath) as f:
-                json.dump(pdf_documents, f)
+            with open(processed_data_filepath, "w") as f:
+                json.dump([asdict(doc) for doc in pdf_documents], f)
 
             print(f"Saved {len(pdf_documents)} to {processed_data_filepath}")
-            
+
+if __name__ == "__main__":
+    save_parsed_pdfs()
