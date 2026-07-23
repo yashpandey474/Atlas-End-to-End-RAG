@@ -6,7 +6,6 @@ class Document:
     page: int
     source: str
 
-
 @dataclass
 class Chunk:
     id: int

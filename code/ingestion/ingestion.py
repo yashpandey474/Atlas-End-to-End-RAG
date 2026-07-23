@@ -56,25 +56,32 @@ def chunk_file(processed_data_filepath: str, overlap: int, chunk_size: int) -> l
     
     return chunks
 
-def chunk(data_processed_filepath: str, overlap: int, chunk_size: int) -> list[Chunk]:
+def chunk(
+        data_processed_folderpath: str,
+        data_chunked_folderpath: str,
+        overlap: int,
+        chunk_size: int
+) -> list[Chunk]:
     # chunk the documents into chunk size and overlap
     # overlap is used so that the sentence's semantic meaning is preserved
     
-    data_processed_folder = Path(data_processed_filepath)
+    data_processed_folder = Path(data_processed_folderpath)
     chunks = []
     for f in data_processed_folder.iterdir():
         if f.is_file():
-            processed_data_filepath = data_processed_filepath + "/" + f.name
+            processed_data_filepath = data_processed_folder / f.name
             chunks.extend(
                 chunk_file(processed_data_filepath=processed_data_filepath, overlap=overlap, chunk_size=chunk_size)
             )
-            chunk_data_filepath = processed_data_filepath[:-5] + "_chunked.json"
+            chunked_data_folder = Path(data_chunked_folderpath)
+            chunked_data_folder.mkdir(parents=True, exist_ok=True)
+            chunk_data_filepath = chunked_data_folder / (f.name[:-5] + "_chunked.json")
             with open(chunk_data_filepath, 'w') as f:
                 json.dump([asdict(chunk) for chunk in chunks], f)
 
-    print(f"For {data_processed_filepath} folder - created {len(chunks)} chunks")
+    print(f"For {data_processed_folder} folder - created {len(chunks)} chunks")
     return chunks
 
 if __name__ == "__main__":
-    chunk("Data/processed", 50, 300)
+    chunk("Data/processed", "Data/chunked", 50, 300)
 
