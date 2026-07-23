@@ -6,7 +6,7 @@ class Document:
     page: int
     source: str
 
-@dataclass
+@dataclass(slots=True)
 class Chunk:
     id: int
     chunk_number: int # in the page
