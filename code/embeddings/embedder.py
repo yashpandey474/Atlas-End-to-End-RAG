@@ -6,13 +6,13 @@ logger = logging.getLogger(__name__)
 
 class Embedder:
     model: FlagAutoModel
-    embedding_dimension: int
+    _embedding_dimension: int
 
     def __init__(self, model_name: str = 'BAAI/bge-large-en-v1.5'):
         try:
             self.model: FlagAutoModel = FlagAutoModel.from_finetuned(model_name, use_fp16=True)
             logger.info(f"Loaded model: {model_name} for generating embeddings")
-            self.embedding_dimension = self.model.model.config.hidden_size
+            self._embedding_dimension = self.model.model.config.hidden_size
             logger.info(f"For model: {model_name}, embedding dimension: {self.embedding_dimension}")
         except Exception as e:
             logger.exception(f"Could not load embedding model due to error: {e}, cannot embed documents.")
@@ -38,4 +38,4 @@ class Embedder:
     
     @property
     def embedding_dimension(self) -> int:
-        return 
+        return self._embedding_dimension
