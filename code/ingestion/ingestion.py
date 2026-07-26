@@ -3,28 +3,37 @@ from pathlib import Path
 import json
 from code.model.document import Chunk, Document
 from dataclasses import asdict
+import logging
+
+logger = logging.getLogger(__name__)
 
 class CharacterChunker:
-    @staticmethod
-    def build_chunk_id(document: Document, chunk_number: int) -> str:
+    overlap: int
+    chunk_size: int
+
+    def __init__(self, overlap: int, chunk_size: int):
+        if overlap >= chunk_size:
+            logger.exception(f"Received invalid overlap {overlap} and chunk size {chunk_size}")
+            raise ValueError(f"Received invalid overlap {overlap} and chunk size {chunk_size}")
+                
+        if chunk_size <= 0:
+            logger.exception(f"Received invalid chunk size: {chunk_size}, chunk_size must be greater than 0")
+            raise ValueError(f"Received invalid chunk size: {chunk_size}, chunk_size must be greater than 0")
+                
+        self.overlap = overlap
+        self.chunk_size = chunk_size
+
+    def build_chunk_id(self, document: Document, chunk_number: int) -> str:
         return f"{document.source}_page{document.page}_chunk{chunk_number}"
 
-    @staticmethod
-    def chunk_document(document: Document, overlap: int, chunk_size: int) -> list[Chunk]:
+    def chunk_document(self, document: Document, overlap: int, chunk_size: int) -> list[Chunk]:
         chunks: list[Chunk] = []
         curr_chunk_num = 0
 
         if not document.text:
-            print(f"Received empty document {document} to chunk")
+            logger.error(f"Received empty document {document} to chunk")
             return chunks
         
-        if overlap >= chunk_size:
-            print(f"Received invalid overlap {overlap} and chunk size {chunk_size}")
-            raise ValueError(f"Received invalid overlap {overlap} and chunk size {chunk_size}")
-        
-        if chunk_size <= 0:
-            print(f"Received invalid chunk size: {chunk_size}, chunk_size must be greater than 0")
-            raise ValueError(f"Received invalid chunk size: {chunk_size}, chunk_size must be greater than 0")
         i = 0
         while i < len(document.text):
             chunk = Chunk(
@@ -41,11 +50,10 @@ class CharacterChunker:
             curr_chunk_num += 1
             i += chunk_size - overlap
 
-        print(f"For document with source {document.source} and page {document.page} - created {len(chunks)} chunks")
+        logger.info(f"For document with source {document.source} and page {document.page} - created {len(chunks)} chunks")
         return chunks
 
-    @staticmethod
-    def chunk_file(processed_data_filepath: str, overlap: int, chunk_size: int) -> list[Chunk]:
+    def chunk_file(self, processed_data_filepath: str) -> list[Chunk]:
         chunks = []
 
         with open(processed_data_filepath, "r") as f:
@@ -59,17 +67,15 @@ class CharacterChunker:
 
         for doc in file_documents:
             chunks.extend(
-                CharacterChunker.chunk_document(doc, overlap=overlap, chunk_size=chunk_size)
+                CharacterChunker.chunk_document(doc, overlap=self.overlap, chunk_size=self.chunk_size)
             )
         
         return chunks
 
-    @staticmethod
     def chunk(
-            data_processed_folderpath: str,
-            data_chunked_folderpath: str,
-            overlap: int,
-            chunk_size: int
+        self,
+        data_processed_folderpath: str,
+        data_chunked_folderpath: str,
     ) -> list[Chunk]:
         # chunk the documents into chunk size and overlap
         # overlap is used so that the sentence's semantic meaning is preserved
@@ -80,7 +86,9 @@ class CharacterChunker:
             if f.is_file():
                 processed_data_filepath = data_processed_folder / f.name
                 chunks.extend(
-                    CharacterChunker.chunk_file(processed_data_filepath=processed_data_filepath, overlap=overlap, chunk_size=chunk_size)
+                    CharacterChunker.chunk_file(
+                        processed_data_filepath=processed_data_filepath,
+                    )
                 )
                 chunked_data_folder = Path(data_chunked_folderpath)
                 chunked_data_folder.mkdir(parents=True, exist_ok=True)
@@ -88,9 +96,5 @@ class CharacterChunker:
                 with open(chunk_data_filepath, 'w') as f:
                     json.dump([asdict(chunk) for chunk in chunks], f)
 
-        print(f"For {data_processed_folder} folder - created {len(chunks)} chunks")
+        logger.info(f"For {data_processed_folder} folder - created {len(chunks)} chunks")
         return chunks
-
-    if __name__ == "__main__":
-        chunk("Data/processed", "Data/chunked", 50, 300)
-
