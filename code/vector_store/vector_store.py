@@ -1,5 +1,5 @@
 import numpy as np
-from code.model.document import Chunk
+from code.model.document import Chunk, EmbeddedChunk
 
 class VectorStore:
     # Owns:
@@ -9,11 +9,12 @@ class VectorStore:
     # store vector -> ID
     def add(
         self,
-        embeddings: np.ndarray,
-        chunks: list[Chunk]
+        embedded_chunks: list[EmbeddedChunk]
     ) -> None:
-        pass
+        embeddings = [embedded_chunk.embedding for embedded_chunk in embedded_chunks]
+        chunks = [embedded_chunk.chunk for embedded_chunk in embedded_chunks]
 
+        ## Logic to add embeddings corresponding to chunk into vector store 
     def search(
         self,
         query_embedding: np.ndarray,

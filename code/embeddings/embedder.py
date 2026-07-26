@@ -1,7 +1,8 @@
 from FlagEmbedding import FlagAutoModel
 import numpy as np
 import logging
-
+from code.model.document import EmbeddedChunk, Chunk
+import math
 logger = logging.getLogger(__name__)
 
 class Embedder:
@@ -49,8 +50,44 @@ class Embedder:
             logger.error(f"Empty array of texts provided to embedder, nothing to embed")
             return np.empty((0, 0), dtype=np.float32)
 
-        logger.info(f"Generating embedding for {len(texts)} texts using batch size of {batch_size}")
-        return self.model.encode(texts, normalize_embeddings=True, batch_size=batch_size)
+
+        # divide into batches to be able to track progress
+        embeddings = []
+        num_batches = math.ceil(len(texts)/batch_size)
+        logger.info(f"Generating embedding for {len(texts)} texts using batch size of {batch_size} - {num_batches} batches")
+        batch_idx = 1
+        for start in range(0, len(texts), batch_size):
+            end = min(start + batch_size, len(texts))
+
+            batch = texts[start: end]
+
+            batch_embeddings = self.model.encode(
+                batch,
+                normalize_embeddings=True
+            )
+            logger.info(f"Embedding batch {batch_idx}/{num_batches} ({len(batch)} texts)")
+            batch_idx+=1
+            embeddings.append(batch_embeddings)
+
+        return np.vstack(embeddings)
+
+
+    def embed_chunk(self, chunk: Chunk) -> EmbeddedChunk:
+        return self.embed_batch_chunk([chunk])[0]
+
+    def embed_batch_chunk(self, chunks: list[Chunk], batch_size: int = 32) -> list[EmbeddedChunk]:
+        if not chunks:
+            return []
+
+        texts = [chunk.text for chunk in chunks]
+        embeddings = self.embed_batch(texts=texts, batch_size=batch_size)
+
+        return [
+            EmbeddedChunk(
+                chunk=chunk,
+                embedding=embedding
+            ) for chunk, embedding in zip(chunks, embeddings)
+        ]
     
     @property
     def embedding_dimension(self) -> int:

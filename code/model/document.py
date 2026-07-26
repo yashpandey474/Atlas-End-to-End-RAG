@@ -1,5 +1,7 @@
 from dataclasses import dataclass
 
+import numpy as np
+
 @dataclass
 class Document:
     text: str
@@ -15,3 +17,8 @@ class Chunk:
     text: str
     page: int
     source: str
+
+@dataclass(slots=True, frozen=True)
+class EmbeddedChunk:
+    chunk: Chunk
+    embedding: np.ndarry
