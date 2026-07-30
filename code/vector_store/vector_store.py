@@ -1,3 +1,5 @@
+from abc import abstractmethod
+
 import numpy as np
 from code.model.document import Chunk, EmbeddedChunk
 from code.model.search import SearchResult
@@ -9,12 +11,15 @@ logger = logging.getLogger(__name__)
 # Abstract class that other store classes will inherit
 class VectorStore:
     # store vector -> ID
+    @abstractmethod
     def add(
         self,
         embedded_chunks: list[EmbeddedChunk]
     ) -> None:
         pass
         ## Logic to add embeddings corresponding to chunk into vector store 
+    
+    @abstractmethod
     def search(
         self,
         query_embedding: np.ndarray,
