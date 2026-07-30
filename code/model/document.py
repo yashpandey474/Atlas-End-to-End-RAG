@@ -10,7 +10,7 @@ class Document:
 
 @dataclass(slots=True, frozen=True)
 class Chunk:
-    id: int
+    id: str
     chunk_number: int # in the page
     start_index: int # in the page
     end_index: int

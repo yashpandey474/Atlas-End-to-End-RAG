@@ -2,7 +2,10 @@ from FlagEmbedding import FlagAutoModel
 import numpy as np
 import logging
 from code.model.document import EmbeddedChunk, Chunk
+from code.model.metrics import EmbeddingMetrics
 import math
+from time import perf_counter
+
 logger = logging.getLogger(__name__)
 
 class Embedder:
@@ -61,11 +64,15 @@ class Embedder:
 
             batch = texts[start: end]
 
+            start_time = perf_counter()
             batch_embeddings = self.model.encode(
                 batch,
                 normalize_embeddings=True
             )
-            logger.info(f"Embedding batch {batch_idx}/{num_batches} ({len(batch)} texts)")
+            elapsed = perf_counter() - start_time
+
+
+            logger.info(f"Generated embeddings for batch {batch_idx}/{num_batches} ({len(batch)} texts) in {elapsed} seconds")
             batch_idx+=1
             embeddings.append(batch_embeddings)
 
