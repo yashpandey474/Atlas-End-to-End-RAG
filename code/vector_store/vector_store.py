@@ -30,7 +30,7 @@ class VectorStore:
 
 class FAISSVector(VectorStore):
     embedding_dimension: int
-    index: IndexFlatL2
+    index: faiss.IndexFlatL2
 
     # FAISS index -> Chunk
     index_mapping: dict[int, Chunk]
@@ -43,11 +43,18 @@ class FAISSVector(VectorStore):
             try:
                 self.index = faiss.read_index(index_file)
             except Exception as e:
-                logger.error(f"Error while reading index from file: {index_file}")
+                logger.exception(f"Error while reading index from file: {index_file}: {e}")
                 raise
             
         self.index = faiss.IndexFlatL2(self.embedding_dimension)
         self.index_mapping = {}
+
+    def persist_index(self, index_file: str):
+        try:
+            faiss.write_index(self.index, index_file)
+            logger.info(f"Successfully wrote index to file: {index_file}")
+        except Exception as e:
+            logger.exception(f"Failed to write index to file: {index_file}: {e}")
         
     def add(
         self,
@@ -66,13 +73,12 @@ class FAISSVector(VectorStore):
             raise ValueError(f"Emeddings provided to add to vectore store are not of correct dimension: {self.embedding_dimension}")
 
         chunks = [embedded_chunk.chunk for embedded_chunk in embedded_chunks]
-        chunk_ids = [chunk.id for chunk in chunks]
 
         # Add to vector store
         try:
             self.index.add(embeddings)
         except Exception as e:
-            logger.error(f"Failed to add chunks: {chunk_ids}")
+            logger.exception(f"Failed to add {len(chunks)} chunks")
             raise
 
         # Add to index mapping
@@ -95,12 +101,18 @@ class FAISSVector(VectorStore):
             return []
         
         distances, indices = self.index.search(query_embedding, k)
-        chunks = []
-        for dist, idx in zip(distances[0], indices[0]):
-            logger.info(f"Index: {idx} - Distance: {dist}")
+        results = []
+        for i, (dist, idx) in enumerate(zip(distances[0], indices[0])):
+            logger.info(f"Index: {idx} - Distance: {dist} - Rank: {i + 1}")
 
             if idx not in self.index_mapping:
-                logger.error(f"")
-            chunks.append(self.index_mapping[idx])
+                logger.error(f"Index: {idx} from search is not in mapping")
+                continue
 
-        return chunks
+            results.append(SearchResult(
+                chunk=self.index_mapping[idx],
+                score=1-dist,
+                rank=i + 1
+            ))
+
+        return results
