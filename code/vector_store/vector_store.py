@@ -31,31 +31,36 @@ class VectorStore:
 class FAISSVector(VectorStore):
     embedding_dimension: int
     index: faiss.IndexFlatL2
+    index_file: str
 
-    # FAISS index -> Chunk
-    index_mapping: dict[int, Chunk]
+    # FAISS index -> Embedded Chunk to store original embedding as well
+    index_mapping: dict[int, EmbeddedChunk]
 
     def __init__(self, embedding_dimension: int, index_file: str):
         self.embedding_dimension = embedding_dimension
-
-        # reload data if exists
-        if check_file_exists(index_file):
-            try:
-                self.index = faiss.read_index(index_file)
-            except Exception as e:
-                logger.exception(f"Error while reading index from file: {index_file}: {e}")
-                raise
-            
+        self.index_file = index_file
+        self.load(index_file)
         self.index = faiss.IndexFlatL2(self.embedding_dimension)
         self.index_mapping = {}
 
-    def persist_index(self, index_file: str):
+    def save(self, index_file: str):
         try:
             faiss.write_index(self.index, index_file)
             logger.info(f"Successfully wrote index to file: {index_file}")
         except Exception as e:
             logger.exception(f"Failed to write index to file: {index_file}: {e}")
-        
+
+    def load(self, index_file: str):
+        # reload data if exists
+        if check_file_exists(index_file):
+            try:
+                self.index = faiss.read_index(self.index_file)
+            except Exception as e:
+                logger.exception(f"Error while reading index from file: {index_file}: {e}")
+                raise
+        else:
+            logger.info(f"Index file : {index_file} does not exist, cannot load index")
+
     def add(
         self,
         embedded_chunks: list[EmbeddedChunk]
@@ -82,8 +87,8 @@ class FAISSVector(VectorStore):
             raise
 
         # Add to index mapping
-        for i in range(len(chunks)):
-            self.index_mapping[current_size + i] = chunks[i]
+        for i in range(len(embedded_chunks)):
+            self.index_mapping[current_size + i] = embedded_chunks[i]
 
         logger.info(f"Successfully added {len(chunks)} to vector store")
 
@@ -110,7 +115,7 @@ class FAISSVector(VectorStore):
                 continue
 
             results.append(SearchResult(
-                chunk=self.index_mapping[idx],
+                chunk=self.index_mapping[idx].chunk,
                 score=1-dist,
                 rank=i + 1
             ))
