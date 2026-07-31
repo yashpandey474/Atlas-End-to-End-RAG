@@ -101,7 +101,7 @@ class FAISSVector(VectorStore):
         """
         Return list of search result
         """
-        if not query_embedding or not k:
+        if query_embedding is None or k <= 0:
             logger.warning(f"No query embedding or no k: {query_embedding} : {k}")
             return []
         
