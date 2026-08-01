@@ -2,3 +2,4 @@ fitz
 FlagEmbedding
 faiss-cpu
 numpy
+pydantic

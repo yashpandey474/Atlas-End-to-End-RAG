@@ -10,7 +10,7 @@ from abc import ABC
 logger = logging.getLogger(__name__)
 
 # Abstract class that other store classes will inherit
-class VectorStore:
+class VectorStore(ABC):
     # store vector -> ID
     @abstractmethod
     def add(
@@ -27,6 +27,12 @@ class VectorStore:
         k: int
     ) -> list[Chunk]:
         pass
+
+    @abstractmethod
+    def save(
+        self,
+        index_file: str
+    )
 
 class FAISSVector(VectorStore):
     embedding_dimension: int
