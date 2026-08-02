@@ -1,7 +1,17 @@
+from abc import ABC
+
 from code.embeddings.embedder import Embedder
 from code.model.search import SearchResult
 from code.vector_store.vector_store import VectorStore
 
+class Retriever(ABC):
+    def retrieve(
+        self,
+        query: str,
+        k: int
+    ) -> list[SearchResult]:
+        pass
+    
 class DenseRetriever:
     embedder: Embedder
     vector_store: VectorStore

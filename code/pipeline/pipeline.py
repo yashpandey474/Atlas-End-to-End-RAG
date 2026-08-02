@@ -2,7 +2,7 @@
 from code.llm.llm import LLM
 from code.llm.prompt_builder import PromptBuilder
 from code.model.answer import Answer
-from code.pipeline.dense_retriever import DenseRetriever
+from code.pipeline.retriever import DenseRetriever
 from code.llm.config import GenerationConfig
 
 class RAGPipeline:
@@ -27,7 +27,10 @@ class RAGPipeline:
         k: int = 5,
     ) -> Answer:
         # fetch search results
-        search_results = self.retriever(question, k)
+        search_results = self.retriever.retrieve(
+            query=question,
+            k=k
+        )
 
         # build prompt
         built_prompt = self.prompt_builder.build(

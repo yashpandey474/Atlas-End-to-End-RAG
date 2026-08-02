@@ -1,3 +1,4 @@
+from code.llm.config import LLMGenerationConfig
 from code.llm.llm import LLM
 import logging
 import torch
@@ -38,7 +39,7 @@ class HuggingFaceLLM(LLM):
     def generate(
         self,
         prompt: str,
-        generation_config: GenerationConfig
+        generation_config: LLMGenerationConfig
     ) -> str:
 
         # tokenize the prompt

@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from code.model.enum.llm_provider import LLMProvider
 
 @dataclass(slots=True, frozen=True)
-class GenerationConfig:
+class LLMGenerationConfig:
     temperature: float = 0.0
     max_new_tokens: int = 512
 
@@ -10,4 +10,4 @@ class GenerationConfig:
 class LLMConfig:
     provider: LLMProvider
     model: str
-    generation_config: GenerationConfig
+    generation_config: LLMGenerationConfig

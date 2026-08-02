@@ -32,9 +32,10 @@ class VectorStore(ABC):
     def save(
         self,
         index_file: str
-    )
+    ) -> None:
+        pass
 
-class FAISSVector(VectorStore):
+class FAISSVectorStore(VectorStore):
     embedding_dimension: int
     index: faiss.IndexFlatL2
     index_file: str

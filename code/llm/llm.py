@@ -1,13 +1,13 @@
 from pydantic import BaseModel
 from abc import ABC, abstractmethod
 
-from code.llm.config import GenerationConfig
+from code.llm.config import LLMGenerationConfig
 
 class LLM(ABC):
     @abstractmethod
     def generate(
         self,
         prompt: str,
-        generation_config: GenerationConfig
+        generation_config: LLMGenerationConfig
     ) -> str:
         pass
