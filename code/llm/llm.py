@@ -1,12 +1,13 @@
 from pydantic import BaseModel
 from abc import ABC, abstractmethod
 
+from code.llm.config import GenerationConfig
+
 class LLM(ABC):
     @abstractmethod
     def generate(
         self,
         prompt: str,
-        temperature: float = 0.0,
-        max_new_tokens: int = 512
+        generation_config: GenerationConfig
     ) -> str:
         pass

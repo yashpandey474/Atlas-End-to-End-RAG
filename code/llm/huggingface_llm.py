@@ -38,8 +38,7 @@ class HuggingFaceLLM(LLM):
     def generate(
         self,
         prompt: str,
-        temperature: float = 0.0,
-        max_new_tokens: int = 512
+        generation_config: GenerationConfig
     ) -> str:
 
         # tokenize the prompt
@@ -57,9 +56,9 @@ class HuggingFaceLLM(LLM):
         with torch.inference_mode():
             outputs = self.model.generate(
                 **inputs,
-                max_new_tokens=max_new_tokens,
-                temperature=temperature,
-                do_sample=temperature > 0,
+                max_new_tokens=generation_config.max_new_tokens,
+                temperature=generation_config.temperature,
+                do_sample=generation_config.temperature > 0,
                 pad_token_id=self.tokenizer.eos_token_id
             )
 
