@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from code.model.enum.llm_provider import LLMProvider
 
 @dataclass(slots=True, frozen=True)
 class GenerationConfig:
@@ -7,6 +8,6 @@ class GenerationConfig:
 
 @dataclass(slots=True, frozen=True)
 class LLMConfig:
-    provider: str
+    provider: LLMProvider
     model: str
     generation_config: GenerationConfig

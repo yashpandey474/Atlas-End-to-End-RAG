@@ -38,7 +38,7 @@ class RAGPipeline:
         # generate answer using LLM
         answer: str = self.llm.generate(
             built_prompt,
-            generation_Config
+            generation_config
         )
 
         return Answer(
