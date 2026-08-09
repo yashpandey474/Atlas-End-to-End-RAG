@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 
-from code.embeddings.embedder import Embedder
-from code.model.search import SearchResult
-from code.vector_store.vector_store import VectorStore
+from embeddings.embedder import Embedder
+from model.search import SearchResult
+from vector_store.vector_store import VectorStore
 
 class Retriever(ABC):
     @abstractmethod

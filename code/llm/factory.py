@@ -1,9 +1,9 @@
 
 
-from code.llm.config import LLMConfig
-from code.llm.huggingface_llm import HuggingFaceLLM
-from code.llm.llm import LLM
-from code.model.enum.llm_provider import LLMProvider
+from llm.config import LLMConfig
+from llm.huggingface_llm import HuggingFaceLLM
+from llm.llm import LLM
+from model.enum.llm_provider import LLMProvider
 
 class LLMFactory:
 

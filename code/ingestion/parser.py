@@ -1,6 +1,6 @@
 import fitz
 from pathlib import Path
-from code.model.document import Document
+from model.document import Document
 import json
 from dataclasses import asdict
 

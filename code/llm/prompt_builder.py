@@ -1,20 +1,14 @@
 from pydantic import BaseModel
 
-from code.model.search import SearchResult
-from code.utils.constants import DEFAULT_PROMPT_TEMPLATE
+from model.search import SearchResult
+from utils.constants import DEFAULT_PROMPT_TEMPLATE
 import logging
 
 logger = logging.getLogger(__name__)
 
 class PromptBuilder(BaseModel):
-    prompt_template: str
-
-    def __init__(
-        self,
-        prompt_template: str = DEFAULT_PROMPT_TEMPLATE
-    ):
-        self.prompt_template = prompt_template
-
+    prompt_template: str = DEFAULT_PROMPT_TEMPLATE
+    
     def search_results_context(
         search_results: list[SearchResult]
     ) -> str:

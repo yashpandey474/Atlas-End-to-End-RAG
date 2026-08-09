@@ -1,11 +1,11 @@
 from abc import abstractmethod
 
 import numpy as np
-from code.model.document import Chunk, EmbeddedChunk
-from code.model.search import SearchResult
+from model.document import Chunk, EmbeddedChunk
+from model.search import SearchResult
 import faiss
 import logging
-from code.utils.file_utils import check_file_exists, read_from_json, write_to_json
+from utils.file_utils import check_file_exists, read_from_json, write_to_json
 from abc import ABC
 logger = logging.getLogger(__name__)
 
@@ -71,7 +71,7 @@ class FAISSVectorStore(VectorStore):
     def load_mapping(self, metadata_file: str):
         try:
             self.index_mapping = read_from_json(metadata_file)
-        except Exception as e;
+        except Exception as e:
             logger.exception(f"Failed to load metadata from {metadata_file}: {e}")
             raise
 

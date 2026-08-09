@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from abc import ABC, abstractmethod
 
-from code.llm.config import LLMGenerationConfig
+from llm.config import LLMGenerationConfig
 
 class LLM(ABC):
     @abstractmethod

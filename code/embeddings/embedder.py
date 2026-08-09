@@ -1,8 +1,8 @@
 from FlagEmbedding import FlagAutoModel
 import numpy as np
 import logging
-from code.model.document import EmbeddedChunk, Chunk
-from code.model.metrics import EmbeddingMetrics
+from model.document import EmbeddedChunk, Chunk
+from model.metrics import EmbeddingMetrics
 import math
 from time import perf_counter
 

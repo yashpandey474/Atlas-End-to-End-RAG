@@ -1,7 +1,7 @@
 
 from pathlib import Path
 import json
-from code.model.document import Chunk, Document
+from model.document import Chunk, Document
 from dataclasses import asdict
 import logging
 

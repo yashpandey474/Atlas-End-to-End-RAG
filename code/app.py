@@ -1,14 +1,17 @@
-from code.embeddings.embedder import Embedder
-from code.llm.config import LLMConfig, LLMGenerationConfig
-from code.llm.factory import LLMFactory
-from code.llm.llm import LLM
-from code.llm.prompt_builder import PromptBuilder
-from code.model.enum.llm_provider import LLMProvider
-from code.pipeline.pipeline import RAGPipeline
-from code.pipeline.retriever import DenseRetriever
-from code.utils.constants import DEFAULT_PROMPT_TEMPLATE
-from code.vector_store.vector_store import FAISSVectorStore
+from embeddings.embedder import Embedder
+from llm.config import LLMConfig, LLMGenerationConfig
+from llm.factory import LLMFactory
+from llm.llm import LLM
+from llm.prompt_builder import PromptBuilder
+from model.enum.llm_provider import LLMProvider
+from pipeline.pipeline import RAGPipeline
+from pipeline.retriever import DenseRetriever
+from utils.constants import DEFAULT_PROMPT_TEMPLATE
+from vector_store.vector_store import FAISSVectorStore
+import logging
 
+
+logger = logging.getLogger(__name__)
 
 def main():
     pass
@@ -24,20 +27,8 @@ if __name__ == "__main__":
         max_new_tokens=512
     )
 
-    embedder = Embedder(
-        model_name = embedding_model,
-        device = device
-    )
-
-    vector_store = FAISSVectorStore(
-        embedder.embedding_dimension,
-        index_file = "faiss_vector_store_index.faiss",
-        metadata_file = "faiss_vector_store_metadata.json"
-    )
-
-    retriever = DenseRetriever(
-        embedder=embedder,
-        vector_store=vector_store
+    prompt_builder: PromptBuilder = PromptBuilder(
+        prompt_template=DEFAULT_PROMPT_TEMPLATE
     )
 
     llm_config = LLMConfig(
@@ -46,13 +37,35 @@ if __name__ == "__main__":
         generation_config=llm_generation_config
     )
 
+    logger.info(f"Creating Embedder with model: {embedding_model} on device: {device}")
+
+    embedder = Embedder(
+        model_name = embedding_model,
+        device = device
+    )
+
+    logger.info(f"Creating FAISSVectorStore with embedding dimension: {embedder.embedding_dimension}")
+
+    vector_store = FAISSVectorStore(
+        embedder.embedding_dimension,
+        index_file = "faiss_vector_store_index.faiss",
+        metadata_file = "faiss_vector_store_metadata.json"
+    )
+
+    logger.info(f"Creating DenseRetriever with embedder and vector store")
+
+    retriever = DenseRetriever(
+        embedder=embedder,
+        vector_store=vector_store
+    )
+
+    logger.info(f"Creating LLM with config: {llm_config}")
+
     llm: LLM = LLMFactory.create(
         config=llm_config
     )
 
-    prompt_builder: PromptBuilder = PromptBuilder(
-        prompt_template=DEFAULT_PROMPT_TEMPLATE
-    )
+
     pipeline: RAGPipeline = RAGPipeline(
         retriever=retriever,
         llm=llm,

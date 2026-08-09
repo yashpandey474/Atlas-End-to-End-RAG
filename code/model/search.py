@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from code.model.document import Chunk
+from model.document import Chunk
 
 @dataclass(slots=True, frozen=True)
 class SearchResult:

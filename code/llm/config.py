@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from code.model.enum.llm_provider import LLMProvider
+from model.enum.llm_provider import LLMProvider
 
 @dataclass(slots=True, frozen=True)
 class LLMGenerationConfig:

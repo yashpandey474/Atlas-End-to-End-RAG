@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from code.model.search import SearchResult
+from model.search import SearchResult
 
 @dataclass(slots=True, frozen=True)
 class Answer:

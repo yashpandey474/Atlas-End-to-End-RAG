@@ -1,5 +1,5 @@
-from code.llm.config import LLMGenerationConfig
-from code.llm.llm import LLM
+from llm.config import LLMGenerationConfig
+from llm.llm import LLM
 import logging
 import torch
 from transformers import (

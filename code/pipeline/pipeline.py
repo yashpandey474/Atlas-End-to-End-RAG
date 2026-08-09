@@ -1,9 +1,10 @@
 ## This file will tie in the different componnets
-from code.llm.llm import LLM
-from code.llm.prompt_builder import PromptBuilder
-from code.model.answer import Answer
-from code.pipeline.retriever import DenseRetriever
-from code.llm.config import GenerationConfig
+from llm.llm import LLM
+from llm.prompt_builder import PromptBuilder
+from model.answer import Answer
+from pipeline.retriever import DenseRetriever
+from llm.config import LLMGenerationConfig
+
 
 class RAGPipeline:
     retriever: DenseRetriever
@@ -23,7 +24,7 @@ class RAGPipeline:
     def ask(
         self,
         question: str,
-        generation_config: GenerationConfig,
+        generation_config: LLMGenerationConfig,
         k: int = 5,
     ) -> Answer:
         # fetch search results
