@@ -65,10 +65,14 @@ class Embedder:
             batch = texts[start: end]
 
             start_time = perf_counter()
-            batch_embeddings = self.model.encode(
-                batch,
-                normalize_embeddings=True
+            batch_embeddings = self.model.encode(batch)
+
+            batch_embeddings = batch_embeddings / np.linalg.norm(
+                batch_embeddings,
+                axis=1,
+                keepdims=True
             )
+
             elapsed = perf_counter() - start_time
 
 

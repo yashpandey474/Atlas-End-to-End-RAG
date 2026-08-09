@@ -73,7 +73,8 @@ if __name__ == "__main__":
     )
 
     pipeline.ask(
-        "hello world"
+        "hello world",
+        generation_config=llm_generation_config,
     )
 
 
