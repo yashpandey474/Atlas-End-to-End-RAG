@@ -1,10 +1,11 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 
 from code.embeddings.embedder import Embedder
 from code.model.search import SearchResult
 from code.vector_store.vector_store import VectorStore
 
 class Retriever(ABC):
+    @abstractmethod
     def retrieve(
         self,
         query: str,
