@@ -18,7 +18,7 @@ def main():
 
 if __name__ == "__main__":
     embedding_model: str = 'BAAI/bge-large-en-v1.5'
-    llm_model: str = "Qwen/Qwen2.5-3B"
+    llm_model: str = "Qwen/Qwen2.5-0.5B"
     device: str = "cpu"
     llm_provider: LLMProvider = LLMProvider.HUGGING_FACE
 

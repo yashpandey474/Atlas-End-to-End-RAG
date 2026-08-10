@@ -121,7 +121,6 @@ class FAISSVectorStore(VectorStore):
 
         logger.info(f"Successfully added {len(chunks)} to vector store")
 
-
     def search( 
         self,
         query_embedding: np.ndarray,
@@ -133,8 +132,13 @@ class FAISSVectorStore(VectorStore):
         if query_embedding is None or k <= 0:
             logger.warning(f"No query embedding or no k: {query_embedding} : {k}")
             return []
+
+        query_embedding = np.asarray(query_embedding, dtype=np.float32)
+        if query_embedding.ndim == 1:
+            query_embedding = query_embedding.reshape(1, -1)
         
         distances, indices = self.index.search(query_embedding, k)
+        
         results = []
         for i, (dist, idx) in enumerate(zip(distances[0], indices[0])):
             logger.info(f"Index: {idx} - Distance: {dist} - Rank: {i + 1}")

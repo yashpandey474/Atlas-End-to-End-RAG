@@ -1,3 +1,5 @@
+from typer import prompt
+
 from llm.config import LLMGenerationConfig
 from llm.llm import LLM
 import logging
@@ -53,6 +55,11 @@ class HuggingFaceLLM(LLM):
             key: value.to(self.model.device)
             for key, value in inputs.items()
         }
+
+        logger.info("PROMPT LENGTH:", len(prompt))
+        logger.info("PROMPT:", repr(prompt[:500]))
+        logger.info("INPUT IDS SHAPE:", inputs["input_ids"].shape)
+        logger.info("INPUT IDS NUMEL:", inputs["input_ids"].numel())
 
         with torch.inference_mode():
             outputs = self.model.generate(
