@@ -49,6 +49,7 @@ class DenseRetriever:
 
             embedded_chunks = self.embedder.embed_chunk(chunks)
             self.vector_store.add(embedded_chunks)
+            logger.info(f"Added {len(embedded_chunks)} embedded chunks to the vector store from file: {chunked_file_path.name}")
                 
 
     def retrieve(

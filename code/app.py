@@ -80,8 +80,8 @@ if __name__ == "__main__":
     for file_path in dir_path.iterdir():
         if file_path.is_file():
             logger.info(f"Ingesting chunks from file: {file_path.name}")
-            vector_store.add(
-                file_path=str(file_path)
+            retriever.add_chunks(
+                chunked_file_path=file_path
             )
 
 
