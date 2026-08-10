@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from embeddings.embedder import Embedder
 from llm.config import LLMConfig, LLMGenerationConfig
 from llm.factory import LLMFactory
@@ -72,6 +74,19 @@ if __name__ == "__main__":
         prompt_builder=prompt_builder
     )
 
+    # Ingest the documents
+    chunked_folder_path = "Data/chunked"
+    dir_path = Path(chunked_folder_path)
+    for file_path in dir_path.iterdir():
+        if file_path.is_file():
+            logger.info(f"Ingesting chunks from file: {file_path.name}")
+            vector_store.add(
+                file_path=str(file_path)
+            )
+
+
+
+    # Ask the questions
     pipeline.ask(
         "hello world",
         generation_config=llm_generation_config,

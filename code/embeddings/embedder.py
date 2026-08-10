@@ -74,8 +74,7 @@ class Embedder:
             )
 
             elapsed = perf_counter() - start_time
-
-
+            
             logger.info(f"Generated embeddings for batch {batch_idx}/{num_batches} ({len(batch)} texts) in {elapsed} seconds")
             batch_idx+=1
             embeddings.append(batch_embeddings)

@@ -62,6 +62,7 @@ class HuggingFaceLLM(LLM):
         logger.info("INPUT IDS NUMEL:", inputs["input_ids"].numel())
 
         with torch.inference_mode():
+            logger.info(f"Generating output with max_new_tokens={generation_config.max_new_tokens}, temperature={generation_config.temperature}")
             outputs = self.model.generate(
                 **inputs,
                 max_new_tokens=generation_config.max_new_tokens,
