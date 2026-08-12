@@ -74,7 +74,7 @@ class Embedder:
             )
 
             elapsed = perf_counter() - start_time
-            
+
             logger.info(f"Generated embeddings for batch {batch_idx}/{num_batches} ({len(batch)} texts) in {elapsed} seconds")
             batch_idx+=1
             embeddings.append(batch_embeddings)
@@ -87,8 +87,10 @@ class Embedder:
 
     def embed_batch_chunk(self, chunks: list[Chunk], batch_size: int = 32) -> list[EmbeddedChunk]:
         if not chunks:
+            logger.info(f"No chunks provided to embedder, nothing to embed")
             return []
 
+        logger.info(f"Chunks received for embedding: {chunks}")
         texts = [chunk.text for chunk in chunks]
         embeddings = self.embed_batch(texts=texts, batch_size=batch_size)
 

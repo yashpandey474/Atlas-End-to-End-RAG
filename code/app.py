@@ -75,7 +75,7 @@ if __name__ == "__main__":
     )
 
     # Ingest the documents
-    chunked_folder_path = "Data/chunked"
+    chunked_folder_path = "../Data/chunked"
     dir_path = Path(chunked_folder_path)
     for file_path in dir_path.iterdir():
         if file_path.is_file():
