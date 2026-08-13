@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from ingestion.index import Indexer
 from embeddings.embedder import Embedder
 from llm.config import LLMConfig, LLMGenerationConfig
 from llm.factory import LLMFactory
@@ -16,12 +17,11 @@ import logging
 logger = logging.getLogger(__name__)
 
 def main():
-    pass
-
-if __name__ == "__main__":
     embedding_model: str = 'BAAI/bge-large-en-v1.5'
     llm_model: str = "Qwen/Qwen2.5-0.5B"
     device: str = "cpu"
+    chunked_folder_path = "../Data/chunked"
+
     llm_provider: LLMProvider = LLMProvider.HUGGING_FACE
 
     llm_generation_config: LLMGenerationConfig = LLMGenerationConfig(
@@ -75,16 +75,14 @@ if __name__ == "__main__":
     )
 
     # Ingest the documents
-    chunked_folder_path = "../Data/chunked"
-    dir_path = Path(chunked_folder_path)
-    for file_path in dir_path.iterdir():
-        if file_path.is_file():
-            logger.info(f"Ingesting chunks from file: {file_path.name}")
-            retriever.add_chunks(
-                chunked_file_path=file_path
-            )
-
-
+    indexer: Indexer = Indexer(
+        embedder=embedder,
+        vector_store=vector_store
+    )
+    indexer.index_chunked_documents(
+        chunked_folder_path=chunked_folder_path,
+        batch_size=32
+    )
 
     # Ask the questions
     pipeline.ask(
@@ -92,7 +90,5 @@ if __name__ == "__main__":
         generation_config=llm_generation_config,
     )
 
-
-
-
-
+if __name__ == "__main__":
+    main()
