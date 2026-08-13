@@ -2,18 +2,18 @@
 from llm.llm import LLM
 from llm.prompt_builder import PromptBuilder
 from model.answer import Answer
-from pipeline.retriever import DenseRetriever
+from pipeline.retriever import DenseRetriever, Retriever
 from llm.config import LLMGenerationConfig
 
 
 class RAGPipeline:
-    retriever: DenseRetriever
+    retriever: Retriever
     llm: LLM
     prompt_builder: PromptBuilder
 
     def __init__(
         self,
-        retriever: DenseRetriever,
+        retriever: Retriever,
         llm: LLM,
         prompt_builder: PromptBuilder
     ):
