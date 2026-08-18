@@ -23,9 +23,10 @@ logger = logging.getLogger(__name__)
 def main(
     embedding_model: str = 'BAAI/bge-base-en-v1.5',
     llm_model: str = "Qwen/Qwen2.5-0.5B",
-    device: str = "cpu",
+    device: str = "mps",
     chunked_folder_path: str = "../Data/chunked",
-    indexing_batch_size: int = 16
+    indexing_batch_size: int = 200,
+    embedding_batch_size: int = 16
 ):
     llm_provider: LLMProvider = LLMProvider.HUGGING_FACE
 
@@ -88,7 +89,8 @@ def main(
     )
     indexer.index_chunked_documents(
         chunked_folder_path=chunked_folder_path,
-        batch_size=16
+        embedding_batch_size=embedding_batch_size,
+        indexing_batch_size=indexing_batch_size
     )
 
     # Ask the questions
