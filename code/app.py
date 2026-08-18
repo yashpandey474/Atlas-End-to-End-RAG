@@ -13,15 +13,20 @@ from utils.constants import DEFAULT_PROMPT_TEMPLATE
 from vector_store.vector_store import FAISSVectorStore
 import logging
 
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s | %(levelname)s | %(name)s | %(message)s"
+)
 
 logger = logging.getLogger(__name__)
 
-def main():
-    embedding_model: str = 'BAAI/bge-large-en-v1.5'
-    llm_model: str = "Qwen/Qwen2.5-0.5B"
-    device: str = "cpu"
-    chunked_folder_path = "../Data/chunked"
-
+def main(
+    embedding_model: str = 'BAAI/bge-base-en-v1.5',
+    llm_model: str = "Qwen/Qwen2.5-0.5B",
+    device: str = "cpu",
+    chunked_folder_path: str = "../Data/chunked",
+    indexing_batch_size: int = 16
+):
     llm_provider: LLMProvider = LLMProvider.HUGGING_FACE
 
     llm_generation_config: LLMGenerationConfig = LLMGenerationConfig(
@@ -67,6 +72,8 @@ def main():
         config=llm_config
     )
 
+    logger.info(f"LLM loaded with model: {llm_model} from provider: {llm_provider}")
+
 
     pipeline: RAGPipeline = RAGPipeline(
         retriever=retriever,
@@ -81,7 +88,7 @@ def main():
     )
     indexer.index_chunked_documents(
         chunked_folder_path=chunked_folder_path,
-        batch_size=32
+        batch_size=16
     )
 
     # Ask the questions

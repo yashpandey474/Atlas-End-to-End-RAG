@@ -20,7 +20,8 @@ class Indexer:
     def index_chunked_documents(
         self,
         chunked_folder_path: str,
-        batch_size: int = 32
+        embedding_batch_size: int = 16,
+        indexing_batch_size: int = 200
     ):
         dir_path = Path(chunked_folder_path)
         chunks = []
@@ -34,15 +35,33 @@ class Indexer:
                     logger.error(f"Error decoding JSON from file {file_path.name}: {e}")
                     continue
 
+                file_chunks = []
                 for chunk_json in content_json:
                     try:
                         chunk = Chunk(**chunk_json)
-                        chunks.append(chunk)
+                        file_chunks.append(chunk)
                     except TypeError as e:
                         logger.error(f"Error creating Chunk from JSON: {e}")
                         continue
-    
-        embedded_chunks = self.embedder.embed_batch_chunk(chunks, batch_size=batch_size)
-        self.vector_store.add(embedded_chunks)
-        logger.info(f"Added {len(embedded_chunks)} embedded chunks to the vector store from folder: {dir_path.name}")
-                    
+                logger.info(f"Loaded {len(file_chunks)} chunks from file: {file_path.name}")
+                chunks.extend(file_chunks)
+
+        logger.info(f"Total chunks to embed and add to vector store: {len(chunks)}")
+        total_chunks = len(chunks)
+
+        all_embedded_chunks = []
+        for start in range(0, total_chunks, embedding_batch_size):
+            end = min(start + embedding_batch_size, total_chunks)
+            batch = chunks[start:end]
+            logger.info("Embedding chunks: %d to %d", start, end)
+            embedded_chunks = self.embedder.embed_batch_chunk(batch, batch_size=embedding_batch_size)
+            all_embedded_chunks.extend(embedded_chunks)
+
+        for start in range(0, len(all_embedded_chunks), indexing_batch_size):
+            end = min(start + indexing_batch_size, len(all_embedded_chunks))
+            to_index_batch = all_embedded_chunks[start:end]
+            logger.info(f"Adding {len(to_index_batch)} embedded chunks to the vector store")
+            self.vector_store.add(to_index_batch)
+            logger.info(f"Added {len(to_index_batch)} embedded chunks to the vector store")
+
+        logger.info(f"Completed indexing all chunks. Total chunks indexed: {total_chunks}")

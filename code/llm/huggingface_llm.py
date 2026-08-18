@@ -25,6 +25,8 @@ class HuggingFaceLLM(LLM):
             # trust_remote_code=True
         )
 
+        logger.info(f"Successfully loaded tokenizer for model: {model_name}")
+
         # load the model
         self.model = AutoModelForCausalLM.from_pretrained(
             model_name,
@@ -32,11 +34,11 @@ class HuggingFaceLLM(LLM):
             device_map=device,
         )
 
+        logger.info(f"Successfully loaded model for model: {model_name}")
+
         # if default padding token is not configured
         if self.tokenizer.pad_token is None:
             self.tokenizer.pad_token = self.tokenizer.eos_token
-
-        logger.info(f"Successfully loaded %s", model_name)
 
     def generate(
         self,
