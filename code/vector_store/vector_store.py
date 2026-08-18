@@ -46,6 +46,7 @@ class FAISSVectorStore(VectorStore):
     def __init__(self, embedding_dimension: int, index_file: str, metadata_file: str):
         self.embedding_dimension = embedding_dimension
         self.index_file = index_file
+        self.metadata_file = metadata_file
 
         if check_file_exists(index_file):
             self.load(index_file)
@@ -60,19 +61,27 @@ class FAISSVectorStore(VectorStore):
         else:
             logger.info(f"Metadata file: {metadata_file} does not exist, starting fresh")
             self.index_mapping = {}
+    
+    def save(self):
+        self.save_mapping(self.metadata_file)
+        logger.info(f"Successfully wrote metadata to file: {self.metadata_file}")
 
-    def save(self, index_file: str):
-        try:
-            faiss.write_index(self.index, index_file)
-            logger.info(f"Successfully wrote index to file: {index_file}")
-        except Exception as e:
-            logger.exception(f"Failed to write index to file: {index_file}: {e}")
+        self.save_index(self.index_file)
+        logger.info(f"Successfully wrote index to file: {self.index_file}")
+
 
     def load_mapping(self, metadata_file: str):
         try:
             self.index_mapping = read_from_json(metadata_file)
         except Exception as e:
             logger.exception(f"Failed to load metadata from {metadata_file}: {e}")
+            raise
+
+    def save_index(self, index_file: str):
+        try:
+            faiss.write_index(self.index, index_file)
+        except Exception as e:
+            logger.exception(f"Failed to write index to file: {index_file}: {e}")
             raise
 
     def save_mapping(self, metadata_file: str):

@@ -89,10 +89,10 @@ class Embedder:
             logger.info(f"No chunks provided to embedder, nothing to embed")
             return []
 
-        logger.info(f"Chunks received for embedding: {chunks}")
+        logger.info(f"Received {len(chunks)} chunks for embedding")
         texts = [chunk.text for chunk in chunks]
         embeddings = self.embed_batch(texts=texts, batch_size=batch_size)
-
+        
         return [
             EmbeddedChunk(
                 chunk=chunk,

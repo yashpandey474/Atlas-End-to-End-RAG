@@ -28,4 +28,4 @@ def read_from_json(file_path: str):
 
 def write_to_json(file_path: str, to_write: dict):
     with open(file_path, "w") as f:
-        json.dump(to_write, file_path)
+        json.dump(to_write, f, indent=4)

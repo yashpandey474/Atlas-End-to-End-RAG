@@ -64,4 +64,5 @@ class Indexer:
             self.vector_store.add(to_index_batch)
             logger.info(f"Added {len(to_index_batch)} embedded chunks to the vector store")
 
+        self.vector_store.save()
         logger.info(f"Completed indexing all chunks. Total chunks indexed: {total_chunks}")

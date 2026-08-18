@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 def main(
     embedding_model: str = 'BAAI/bge-base-en-v1.5',
     llm_model: str = "Qwen/Qwen2.5-0.5B",
-    device: str = "mps",
+    device: str = "cpu",
     chunked_folder_path: str = "../Data/chunked",
     indexing_batch_size: int = 200,
     embedding_batch_size: int = 16
