@@ -28,7 +28,7 @@ def create_pipeline(
     embedder_index_file: str =  "faiss_vector_store_index.faiss",
     embedder_metadata_file: str = "faiss_vector_store_metadata.json",
     device: str = "cpu"
-):
+) -> RAGPipeline:
     prompt_builder: PromptBuilder = PromptBuilder(
         prompt_template=DEFAULT_PROMPT_TEMPLATE
     )
@@ -76,8 +76,4 @@ def create_pipeline(
         prompt_builder=prompt_builder
     )
 
-    return {
-        "pipeline": pipeline,
-        "embedder": embedder,
-        "vector_store": vector_store
-    }
+    return pipeline
