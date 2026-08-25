@@ -1,5 +1,6 @@
 ## File to index the chunked documents and create the FAISS vector store
 from pathlib import Path
+from utils.processing_utils import call_in_batches
 from model.document import Chunk
 from embeddings.embedder import Embedder
 from vector_store.vector_store import FAISSVectorStore
@@ -50,6 +51,7 @@ class Indexer:
         total_chunks = len(chunks)
 
         all_embedded_chunks = []
+
         for start in range(0, total_chunks, embedding_batch_size):
             end = min(start + embedding_batch_size, total_chunks)
             batch = chunks[start:end]
