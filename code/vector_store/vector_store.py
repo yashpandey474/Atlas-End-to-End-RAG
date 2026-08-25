@@ -57,7 +57,6 @@ class FAISSVectorStore(VectorStore):
         # later, load this from a file too
         if check_file_exists(metadata_file):
             self.load_mapping(metadata_file)
-            logger.info(f"Successfully loaded emtadata for {len(self.index_mapping)} chunks from {metadata_file}")
         else:
             logger.info(f"Metadata file: {metadata_file} does not exist, starting fresh")
             self.index_mapping = {}
@@ -73,31 +72,45 @@ class FAISSVectorStore(VectorStore):
     def load_mapping(self, metadata_file: str):
         try:
             self.index_mapping = read_from_json(metadata_file)
+            logger.info(f"Successfully loaded emtadata for {len(self.index_mapping)} chunks from {metadata_file}")
         except Exception as e:
             logger.exception(f"Failed to load metadata from {metadata_file}: {e}")
-            raise
+            self.index_mapping = {}
 
     def save_index(self, index_file: str):
         try:
             faiss.write_index(self.index, index_file)
         except Exception as e:
             logger.exception(f"Failed to write index to file: {index_file}: {e}")
-            raise
 
     def save_mapping(self, metadata_file: str):
         try:
             write_to_json(metadata_file, self.index_mapping)
         except Exception as e:
             logger.exception(f"Failed to write metadata to file: {metadata_file}: {e}")
-            raise
-        
-    def load(self, index_file: str):
-        # reload data if exists
+
+    def load_index(self, index_file: str):
         try:
-            self.index = faiss.read_index(self.index_file)
+            self.index = faiss.read_index(index_file)
         except Exception as e:
-            logger.exception(f"Error while reading index from file: {index_file}: {e}")
-            raise
+            logger.exception(f"Failed to load index from file: {index_file}: {e}")
+            self.index = faiss.IndexFlatL2(self.embedding_dimension)
+            
+    def load(self):
+        # reload data if exists
+        if check_file_exists(self.index_file):
+            self.load_index(self.index_file)
+            logger.info(f"Successfully loaded index from file: {self.index_file}")
+        else:
+            logger.info(f"Index file: {self.index_file} does not exist, cannot load index")
+            self.index = faiss.IndexFlatL2(self.embedding_dimension)
+
+        if check_file_exists(self.metadata_file):
+            self.load_mapping(self.metadata_file)
+            logger.info(f"Successfully loaded emtadata for {len(self.index_mapping)} chunks from {self.metadata_file}")
+        else:
+            logger.info(f"Metadata file: {self.metadata_file} does not exist, starting fresh")
+            self.index_mapping = {}
 
     def add(
         self,
