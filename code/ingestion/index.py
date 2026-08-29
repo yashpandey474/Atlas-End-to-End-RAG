@@ -18,44 +18,57 @@ class Indexer:
         self.embedder = embedder
         self.vector_store = vector_store
 
+    def load_chunks_from_file(self, file_path: str) -> list[Chunk]:
+        content = file_path.read_text()
+        file_chunks = []
+        try:
+            content_json = json.loads(content)
+        except json.JSONDecodeError as e:
+            logger.error(f"Error decoding JSON from file {file_path.name}: {e}")
+            return []
+
+        for chunk_json in content_json:
+            try:
+                file_chunks.append(Chunk(**chunk_json))
+            except TypeError as e:
+                logger.error(f"Error creating Chunk from JSON: {e}")
+
+        return file_chunks
+
+    def embed_and_add_chunks(self, chunks: list[Chunk], embedding_batch_size: int = 16):
+        if not chunks:
+            logger.warning("No chunks provided for embedding and adding to vector store.")
+            return
+
+        logger.info(f"Embedding and adding {len(chunks)} chunks to the vector store.")
+        total_chunks = len(chunks)
+        for start in range(0, len(chunks), embedding_batch_size):
+            end = min(start + embedding_batch_size, total_chunks)
+            batch = chunks[start:end]
+            logger.info("Embedding chunks: %d to %d", start, end)
+            embedded_chunks = self.embedder.embed_batch_chunk(
+                batch,
+                batch_size=embedding_batch_size)
+            logger.info("Adding embedded chunks to vector store: %d to %d", start, end)
+            self.vector_store.add(embedded_chunks)
+
+
     def index_chunked_documents(
         self,
         chunked_folder_path: str,
         embedding_batch_size: int = 16,
     ):
         dir_path = Path(chunked_folder_path)
-        chunks = []
         for file_path in dir_path.iterdir():
             if file_path.is_file():
                 logger.info(f"Indexing chunks from file: {file_path.name}")
-                content = file_path.read_text()
-                try:
-                    content_json = json.loads(content)
-                except json.JSONDecodeError as e:
-                    logger.error(f"Error decoding JSON from file {file_path.name}: {e}")
-                    continue
+                file_chunks = self.load_chunks_from_file(file_path)
 
-                file_chunks = []
-                for chunk_json in content_json:
-                    try:
-                        chunk = Chunk(**chunk_json)
-                        file_chunks.append(chunk)
-                    except TypeError as e:
-                        logger.error(f"Error creating Chunk from JSON: {e}")
-                        continue
                 logger.info(f"Loaded {len(file_chunks)} chunks from file: {file_path.name}")
-                chunks.extend(file_chunks)
+                total_chunks = len(file_chunks)
 
-        logger.info(f"Total chunks to embed and add to vector store: {len(chunks)}")
-        total_chunks = len(chunks)
-
-        for start in range(0, total_chunks, embedding_batch_size):
-            end = min(start + embedding_batch_size, total_chunks)
-            batch = chunks[start:end]
-            logger.info("Embedding chunks: %d to %d", start, end)
-            embedded_chunks = self.embedder.embed_batch_chunk(batch, batch_size=embedding_batch_size)
-            logger.info("Adding embedded chunks to vector store: %d to %d", start, end)
-            self.vector_store.add(embedded_chunks)
+                self.embed_and_add_chunks(file_chunks, embedding_batch_size)
+                logger.info(f"Completed indexing chunks from file: {file_path.name}")
 
         self.vector_store.save()
         logger.info(f"Completed indexing all chunks. Total chunks indexed: {total_chunks}")
