@@ -24,7 +24,11 @@ class Embedder:
                 raise ValueError(f"Device value is invalid: {device}")
 
             self.device = device
-            self.model: FlagAutoModel = FlagAutoModel.from_finetuned(model_name, use_fp16=True, device=device)
+            self.model: FlagAutoModel = FlagAutoModel.from_finetuned(
+                model_name,
+                use_fp16=device.lower() == 'cuda',
+                device=device
+            )
             logger.info(f"Loaded model: {model_name} for generating embeddings")
             self._embedding_dimension = self.model.model.config.hidden_size
             logger.info(f"For model: {model_name}, embedding dimension: {self.embedding_dimension}")

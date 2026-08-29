@@ -35,9 +35,9 @@ def main(
 
     indexer.index_chunked_documents(
         chunked_folder_path=chunked_data_folder_path,
-        embedding_batch_size=embedding_batch_size,
-        indexing_batch_size=indexing_batch_size
+        embedding_batch_size=embedding_batch_size
     )
 
 
-        
+if __name__ == "__main__":
+    main()
