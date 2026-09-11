@@ -49,7 +49,7 @@ class FAISSVectorStore(VectorStore):
         self.metadata_file = metadata_file
 
         if check_file_exists(index_file):
-            self.load(index_file)
+            self.load()
         else:
             logger.info(f"Index file : {index_file} does not exist, cannot load index")
             self.index = faiss.IndexFlatL2(self.embedding_dimension)

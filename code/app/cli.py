@@ -3,11 +3,10 @@ Interactive CLI for the RAG pipeline.
 """
 
 import logging
+from app.factory import create_pipeline
+from llm.config import LLMGenerationConfig
+from pipeline.pipeline import RAGPipeline
 
-from code.app.factory import create_pipeline
-from code.llm.config import LLMConfig, LLMGenerationConfig
-from code.model.enum.llm_provider import LLMProvider
-from code.pipeline.pipeline import RAGPipeline
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s | %(levelname)s | %(name)s | %(message)s"
@@ -22,12 +21,6 @@ def main(
     generation_config: LLMGenerationConfig = LLMGenerationConfig(
         temperature=llm_generation_temperature,
         max_new_tokens=llm_generation_max_new_tokens
-    )
-
-    llm_config: LLMConfig = LLMConfig(
-        model=llm_model,
-        provider=LLMProvider.HUGGING_FACE,
-        generation_config=generation_config
     )
 
     logger.info(f"Creating lLM pipeline with model: {llm_model} and generation config: {generation_config}")

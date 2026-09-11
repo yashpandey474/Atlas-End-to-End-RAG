@@ -5,16 +5,16 @@ It provides a factory method to create an instance of the RAG application with t
 
 import logging
 
-from code.embeddings.embedder import Embedder
-from code.llm.config import LLMConfig, LLMGenerationConfig
-from code.llm.factory import LLMFactory
-from code.llm.llm import LLM
-from code.llm.prompt_builder import PromptBuilder
-from code.model.enum.llm_provider import LLMProvider
-from code.pipeline.pipeline import RAGPipeline
-from code.pipeline.retriever import DenseRetriever
-from code.utils.constants import DEFAULT_PROMPT_TEMPLATE
-from code.vector_store.vector_store import FAISSVectorStore
+from embeddings.embedder import Embedder
+from llm.config import LLMConfig, LLMGenerationConfig
+from llm.factory import LLMFactory
+from llm.llm import LLM
+from llm.prompt_builder import PromptBuilder
+from model.enum.llm_provider import LLMProvider
+from pipeline.pipeline import RAGPipeline
+from pipeline.retriever import DenseRetriever
+from utils.constants import DEFAULT_PROMPT_TEMPLATE
+from vector_store.vector_store import FAISSVectorStore
 logger = logging.getLogger(__name__)
 
 def create_pipeline(
