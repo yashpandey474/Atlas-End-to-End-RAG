@@ -4,6 +4,10 @@ from ingestion.index import Indexer
 from embeddings.embedder import Embedder
 from vector_store.vector_store import FAISSVectorStore
 
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s | %(levelname)s | %(name)s | %(message)s"
+)
 logger = logging.getLogger(__name__)
 
 def main(

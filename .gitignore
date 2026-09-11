@@ -6,3 +6,4 @@ venv/
 *.json
 */*.json
 */*.faiss
+*/faiss_vector_store_metadata.json
