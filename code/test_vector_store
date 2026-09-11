@@ -1,0 +1,28 @@
+import faiss
+import numpy as np
+
+dimension = 768
+
+index = faiss.IndexFlatL2(dimension)
+
+embedding = np.random.rand(
+    1,
+    dimension
+).astype(np.float32)
+
+print("Before add")
+
+index.add(embedding)
+
+print("After add")
+
+query = np.random.rand(
+    1,
+    dimension
+).astype(np.float32)
+
+distances, indices = index.search(query, 5)
+
+print("After search")
+print(distances)
+print(indices)

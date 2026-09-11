@@ -38,9 +38,14 @@ class DenseRetriever:
         query: str,
         k: int
     ) -> list[SearchResult]:
+
+        print(f"Before generating embedding")
+
         # embed the query
         query_embedding = self.embedder.embed(query)
 
+        print(f"After generating embedding")
+        
         # retrieve most relevant results
         search_results = self.vector_store.search(
             query_embedding=query_embedding,

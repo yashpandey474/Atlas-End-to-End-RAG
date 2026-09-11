@@ -27,17 +27,27 @@ class RAGPipeline:
         generation_config: LLMGenerationConfig,
         k: int = 5,
     ) -> Answer:
+
+        print(F"Before getting search results")
+
         # fetch search results
         search_results = self.retriever.retrieve(
             query=question,
             k=k
         )
 
+        print(f"After getting search results: {search_results}")
+
+
+        print(f"Before building prompt")
+
         # build prompt
         built_prompt = self.prompt_builder.build(
             question,
             search_results
         )
+
+        print(f"After building prompt")
 
         # generate answer using LLM
         answer: str = self.llm.generate(
