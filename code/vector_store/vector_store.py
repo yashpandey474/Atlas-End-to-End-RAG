@@ -7,6 +7,8 @@ import faiss
 import logging
 from utils.file_utils import check_file_exists, read_from_json, write_to_json
 from abc import ABC
+from dataclasses import asdict
+
 logger = logging.getLogger(__name__)
 
 # Abstract class that other store classes will inherit
@@ -40,8 +42,8 @@ class FAISSVectorStore(VectorStore):
     index: faiss.IndexFlatL2
     index_file: str
 
-    # FAISS index -> Embedded Chunk to store original embedding as well
-    index_mapping: dict[int, EmbeddedChunk]
+    # FAISS index -> Chunk to store metadata, embedding is not needed as index stores vector -> index
+    index_mapping: dict[int, Chunk]
 
     def __init__(self, embedding_dimension: int, index_file: str, metadata_file: str):
         self.embedding_dimension = embedding_dimension
@@ -72,7 +74,13 @@ class FAISSVectorStore(VectorStore):
 
     def load_mapping(self, metadata_file: str):
         try:
-            self.index_mapping = read_from_json(metadata_file)
+            raw_mapping = read_from_json(metadata_file) 
+
+            self.index_mapping = {
+                int(index): Chunk(**chunk_data)
+                for index, chunk_data in raw_mapping.items()
+            }
+
             logger.info(f"Successfully loaded emtadata for {len(self.index_mapping)} chunks from {metadata_file}")
         except Exception as e:
             logger.exception(f"Failed to load metadata from {metadata_file}: {e}")
@@ -81,15 +89,24 @@ class FAISSVectorStore(VectorStore):
     def save_index(self, index_file: str):
         try:
             faiss.write_index(self.index, index_file)
+            logger.info(f"Successfully saved FAISS index to {index_file}")
         except Exception as e:
             logger.exception(f"Failed to write index to file: {index_file}: {e}")
-
+            raise
+        
     def save_mapping(self, metadata_file: str):
         try:
-            write_to_json(metadata_file, self.index_mapping)
+            serializable_mapping = {
+                str(index): asdict(chunk) for index, chunk in self.index_mapping.items()
+            }
+
+            write_to_json(metadata_file, serializable_mapping)
+
+            logger.info(f"Successfully wrote metadata for {len(serializable_mapping)} chunks to file {metadata_file}")
         except Exception as e:
             logger.exception(f"Failed to write metadata to file: {metadata_file}: {e}")
-
+            raise
+        
     def load_index(self, index_file: str):
         try:
             self.index = faiss.read_index(index_file)
@@ -140,7 +157,7 @@ class FAISSVectorStore(VectorStore):
 
         # Add to index mapping
         for i in range(len(embedded_chunks)):
-            self.index_mapping[current_size + i] = embedded_chunks[i]
+            self.index_mapping[current_size + i] = embedded_chunks[i].chunk
 
         logger.info(f"Successfully added {len(chunks)} to vector store")
 
@@ -171,7 +188,7 @@ class FAISSVectorStore(VectorStore):
                 continue
 
             results.append(SearchResult(
-                chunk=self.index_mapping[idx].chunk,
+                chunk=self.index_mapping[idx],
                 score=dist,
                 rank=i + 1
             ))
