@@ -1,7 +1,7 @@
 DEFAULT_PROMPT_TEMPLATE = """
 You are a helpful assistant.
 
-Answer ONLY using the provided context.
+Answer based on the provided context.
 
 Context: {search_results}
 

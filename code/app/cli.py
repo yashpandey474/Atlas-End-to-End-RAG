@@ -67,7 +67,7 @@ def main(
 
 
             for result in answer.search_results:
-                print(f"Rank: {result.rank} | Distance: {result.distance:.4f} | Chunk ID: {result.chunk.id}")
+                print(f"Rank: {result.rank} | Distance: {result.score:.4f} | Chunk ID: {result.chunk.id}")
                 print(f"Chunk Text: {result.chunk.text}")
                 print("-" * 60)
 

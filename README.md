@@ -177,3 +177,5 @@ Each component can be replaced independently without affecting the rest of the s
 # License
 
 This project is licensed under the MIT License.
+
+FAISS multithreading conflicts with something in this particular Atlas process/environment, while single-threaded FAISS works.

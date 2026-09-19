@@ -10,10 +10,12 @@ class PromptBuilder(BaseModel):
     prompt_template: str = DEFAULT_PROMPT_TEMPLATE
     
     def search_results_context(
+        self, 
         search_results: list[SearchResult]
     ) -> str:
 
         if not search_results:
+            logger.info("No search results to get context for prompt")
             return ""
 
         context = []

@@ -58,10 +58,10 @@ class HuggingFaceLLM(LLM):
             for key, value in inputs.items()
         }
 
-        logger.info("PROMPT LENGTH:", len(prompt))
-        logger.info("PROMPT:", repr(prompt[:500]))
-        logger.info("INPUT IDS SHAPE:", inputs["input_ids"].shape)
-        logger.info("INPUT IDS NUMEL:", inputs["input_ids"].numel())
+        logger.info(f"PROMPT LENGTH: {len(prompt)}")
+        logger.info(f"PROMPT: {repr(prompt[:500])}")
+        logger.info(f"INPUT IDS SHAPE: {inputs["input_ids"].shape}")
+        logger.info(f"INPUT IDS NUMEL: {inputs["input_ids"].numel()}")
 
         with torch.inference_mode():
             logger.info(f"Generating output with max_new_tokens={generation_config.max_new_tokens}, temperature={generation_config.temperature}")

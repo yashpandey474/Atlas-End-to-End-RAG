@@ -50,6 +50,10 @@ class FAISSVectorStore(VectorStore):
         self.index_file = index_file
         self.metadata_file = metadata_file
 
+        # tell faiss not to create multiple OpenMP workers
+        # observed that with multiple threads, something in the native runtime is causing an invalid memory access
+        faiss.omp_set_num_threads(1) # TODO: create a config class
+
         if check_file_exists(index_file):
             self.load()
             logger.info(f"Loaded from index file")
@@ -57,7 +61,7 @@ class FAISSVectorStore(VectorStore):
             logger.info(f"Index file : {index_file} does not exist, cannot load index")
             self.index = faiss.IndexFlatL2(self.embedding_dimension)
 
-        # later, load this from a file too
+        # later, load this from a file too`
         if check_file_exists(metadata_file):
             self.load_mapping(metadata_file)
         else:
@@ -225,10 +229,6 @@ class FAISSVectorStore(VectorStore):
         )
 
         logger.info(f"Searching FAISS: shape={query_embedding.shape}, k={k}, total={self.index.ntotal}")
-
-        # tell faiss not to create multiple OpenMP workers
-        # observed that with multiple threads, something in the native runtime is causing an invalid memory access
-        faiss.omp_set_num_threads(1)
 
         distances, indices = self.index.search(
             np.ascontiguousarray(query_embedding),
