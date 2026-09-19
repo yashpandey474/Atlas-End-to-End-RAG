@@ -63,6 +63,18 @@ class FAISSVectorStore(VectorStore):
         else:
             logger.info(f"Metadata file: {metadata_file} does not exist, starting fresh")
             self.index_mapping = {}
+
+        logger.info(
+            "FAISS invariant: ntotal=%d, metadata=%d",
+            self.index.ntotal,
+            len(self.index_mapping)
+        )
+        if self.index.ntotal != len(self.index_mapping):
+            raise RuntimeError(
+                f"FAISS/metadata mismatch: "
+                f"index has {self.index.ntotal} vectors but "
+                f"metadata has {len(self.index_mapping)} entries"
+            )
     
     def save(self):
         self.save_mapping(self.metadata_file)
@@ -106,7 +118,7 @@ class FAISSVectorStore(VectorStore):
         except Exception as e:
             logger.exception(f"Failed to write metadata to file: {metadata_file}: {e}")
             raise
-        
+
     def load_index(self, index_file: str):
         try:
             self.index = faiss.read_index(index_file)
@@ -169,16 +181,56 @@ class FAISSVectorStore(VectorStore):
         """
         Return list of search result
         """
+
+        if self.index.ntotal == 0:
+            logger.warning(f"FAISS index is empty")
+            return []
+
         if query_embedding is None or k <= 0:
             logger.warning(f"No query embedding or no k: {query_embedding} : {k}")
             return []
 
+        logger.info(f"Before re-aliging query embedding")
+
         query_embedding = np.asarray(query_embedding, dtype=np.float32)
         if query_embedding.ndim == 1:
             query_embedding = query_embedding.reshape(1, -1)
-        
-        distances, indices = self.index.search(query_embedding, k)
-        
+
+        if query_embedding.ndim != 2:
+            raise ValueError(f"Expected 2D query embedding but got {query_embedding.shape}")
+
+        if query_embedding.shape[1] != self.embedding_dimension:
+            raise ValueError(
+                f"Expected embedding dimention {self.embedding_dimension} but got {query_embedding.shape[1]}"
+            )
+
+        if not np.isfinite(query_embedding).all():
+            raise ValueError("Query embedding contains NaN or Inf")
+
+        k = min(k, self.index.ntotal)
+
+        logger.info(
+            "query dtype=%s shape=%s contiguous=%s",
+            query_embedding.dtype,
+            query_embedding.shape,
+            query_embedding.flags["C_CONTIGUOUS"]
+        )
+
+        logger.info(
+            "query min=%f max=%f norm=%f",
+            query_embedding.min(),
+            query_embedding.max(),
+            np.linalg.norm(query_embedding)
+        )
+
+        logger.info(f"Searching FAISS: shape={query_embedding.shape}, k={k}, total={self.index.ntotal}")
+
+        distances, indices = self.index.search(
+            np.ascontiguousarray(query_embedding),
+            k
+        )
+
+        logger.info(f"After finding in index")
         results = []
         for i, (dist, idx) in enumerate(zip(distances[0], indices[0])):
             logger.info(f"Index: {idx} - Distance: {dist} - Rank: {i + 1}")
