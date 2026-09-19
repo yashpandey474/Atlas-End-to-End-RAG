@@ -122,6 +122,7 @@ class FAISSVectorStore(VectorStore):
     def load_index(self, index_file: str):
         try:
             self.index = faiss.read_index(index_file)
+            logger.info(f"type {type(self.index)} d: {self.index.d} ntotal: {self.index.ntotal} is_trained: {self.index.is_trained}")
         except Exception as e:
             logger.exception(f"Failed to load index from file: {index_file}: {e}")
             self.index = faiss.IndexFlatL2(self.embedding_dimension)
@@ -224,6 +225,10 @@ class FAISSVectorStore(VectorStore):
         )
 
         logger.info(f"Searching FAISS: shape={query_embedding.shape}, k={k}, total={self.index.ntotal}")
+
+        # tell faiss not to create multiple OpenMP workers
+        # observed that with multiple threads, something in the native runtime is causing an invalid memory access
+        faiss.omp_set_num_threads(1)
 
         distances, indices = self.index.search(
             np.ascontiguousarray(query_embedding),

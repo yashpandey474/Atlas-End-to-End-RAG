@@ -69,6 +69,7 @@ def test_load_index():
     logger.info("ntotal:", index.ntotal)
 
     query = np.random.rand(1, index.d).astype(np.float32)
+    query /= np.linalg.norm(query)
 
     logger.info("Searching...")
     distances, indices = index.search(query, 5)
