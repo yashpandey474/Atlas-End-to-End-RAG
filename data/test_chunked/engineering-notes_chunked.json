@@ -1,0 +1,56 @@
+[
+  {
+    "id": "engineering-notes-001",
+    "chunk_number": 1,
+    "start_index": 0,
+    "end_index": 251,
+    "text": "Retrieval quality depends on both semantic similarity and the quality of the document chunks. Very small chunks can lose useful context, while very large chunks can make retrieval less precise and consume more language-model context.",
+    "page": 1,
+    "source": "engineering-notes.pdf"
+  },
+  {
+    "id": "engineering-notes-002",
+    "chunk_number": 2,
+    "start_index": 252,
+    "end_index": 498,
+    "text": "Dense retrieval is useful when a query and relevant passage use different words but express similar ideas. For example, a question about reducing model response time may retrieve a passage discussing latency optimization even if the exact phrase reducing response time does not appear.",
+    "page": 1,
+    "source": "engineering-notes.pdf"
+  },
+  {
+    "id": "engineering-notes-003",
+    "chunk_number": 3,
+    "start_index": 499,
+    "end_index": 747,
+    "text": "Lexical retrieval is useful for exact identifiers, product names, error messages, acronyms, and technical terminology. A future Atlas version will combine dense retrieval with BM25 using a hybrid ranking strategy.",
+    "page": 2,
+    "source": "engineering-notes.pdf"
+  },
+  {
+    "id": "engineering-notes-004",
+    "chunk_number": 4,
+    "start_index": 748,
+    "end_index": 1004,
+    "text": "A cross-encoder reranker can examine a query and candidate passage together and assign a relevance score. A practical retrieval architecture can first retrieve a larger candidate set using inexpensive methods and then rerank only the top candidates.",
+    "page": 2,
+    "source": "engineering-notes.pdf"
+  },
+  {
+    "id": "engineering-notes-005",
+    "chunk_number": 5,
+    "start_index": 1005,
+    "end_index": 1262,
+    "text": "Retrieval systems should be evaluated independently from generation. Useful retrieval metrics include Recall at K, Mean Reciprocal Rank, and nDCG. These metrics make it possible to compare dense, lexical, hybrid, and reranked retrieval objectively.",
+    "page": 3,
+    "source": "engineering-notes.pdf"
+  },
+  {
+    "id": "engineering-notes-006",
+    "chunk_number": 6,
+    "start_index": 1263,
+    "end_index": 1508,
+    "text": "Production retrieval systems should record latency for embedding, retrieval, reranking, and generation separately. Separating these measurements makes performance bottlenecks easier to diagnose and provides a foundation for future observability.",
+    "page": 3,
+    "source": "engineering-notes.pdf"
+  }
+]

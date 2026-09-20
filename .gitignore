@@ -1,9 +1,10 @@
-Data/
+data/chunked/
+data/processed/
+data/raw/
 __pycache__/
 venv/
 .DS_Store
 *.faiss
 *.json
-*/*.json
 */*.faiss
-*/faiss_vector_store_metadata.json
+code/faiss_vector_store_metadata.json

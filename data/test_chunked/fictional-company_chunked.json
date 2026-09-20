@@ -1,0 +1,56 @@
+[
+  {
+    "id": "fictional-company-001",
+    "chunk_number": 1,
+    "start_index": 0,
+    "end_index": 238,
+    "text": "Northstar Analytics is a fictional software company that builds data infrastructure for mid-sized organizations. Its main product, Northstar Lake, provides managed object storage, batch processing, and analytical query services.",
+    "page": 1,
+    "source": "northstar-company.pdf"
+  },
+  {
+    "id": "fictional-company-002",
+    "chunk_number": 2,
+    "start_index": 239,
+    "end_index": 475,
+    "text": "Northstar Lake is organized around three services: Vault for object storage, Orbit for distributed batch processing, and Lens for interactive analytics. Vault stores immutable data objects, Orbit schedules compute jobs, and Lens executes SQL queries over curated datasets.",
+    "page": 1,
+    "source": "northstar-company.pdf"
+  },
+  {
+    "id": "fictional-company-003",
+    "chunk_number": 3,
+    "start_index": 476,
+    "end_index": 712,
+    "text": "The company uses a twelve-hour recovery point objective for its standard data tier. Customers that require lower recovery point objectives can purchase a premium replication configuration that maintains an additional copy in a separate availability zone.",
+    "page": 2,
+    "source": "northstar-company.pdf"
+  },
+  {
+    "id": "fictional-company-004",
+    "chunk_number": 4,
+    "start_index": 713,
+    "end_index": 955,
+    "text": "Northstar's engineering team recommends asynchronous batch processing for workloads that can tolerate delayed results. Interactive Lens queries are intended for exploratory analysis where users expect results within seconds rather than minutes.",
+    "page": 2,
+    "source": "northstar-company.pdf"
+  },
+  {
+    "id": "fictional-company-005",
+    "chunk_number": 5,
+    "start_index": 956,
+    "end_index": 1194,
+    "text": "Northstar Analytics has a fictional customer support policy with three severity levels. Severity one covers complete service outages, severity two covers major degradation, and severity three covers isolated non-critical issues.",
+    "page": 3,
+    "source": "northstar-company.pdf"
+  },
+  {
+    "id": "fictional-company-006",
+    "chunk_number": 6,
+    "start_index": 1195,
+    "end_index": 1440,
+    "text": "For security, Northstar requires encryption at rest for all managed storage and encryption in transit for service-to-service communication. Administrative access is protected by multi-factor authentication and audited through centralized access logs.",
+    "page": 3,
+    "source": "northstar-company.pdf"
+  }
+]

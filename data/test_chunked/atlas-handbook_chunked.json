@@ -1,0 +1,56 @@
+[
+  {
+    "id": "atlas-handbook-001",
+    "chunk_number": 1,
+    "start_index": 0,
+    "end_index": 247,
+    "text": "Atlas is a local-first enterprise knowledge engine. Its baseline pipeline accepts documents, splits them into chunks, converts the chunks into dense embeddings, stores those embeddings in FAISS, retrieves relevant chunks for a user query, and passes the retrieved context to a local language model.",
+    "page": 1,
+    "source": "atlas-handbook.pdf"
+  },
+  {
+    "id": "atlas-handbook-002",
+    "chunk_number": 2,
+    "start_index": 248,
+    "end_index": 477,
+    "text": "The ingestion layer is responsible for turning source documents into structured data. PDF files are parsed page by page and represented as Document objects containing the text, page number, and source. The chunker then creates overlapping Chunk objects so that retrieval can operate on manageable pieces of context.",
+    "page": 1,
+    "source": "atlas-handbook.pdf"
+  },
+  {
+    "id": "atlas-handbook-003",
+    "chunk_number": 3,
+    "start_index": 478,
+    "end_index": 710,
+    "text": "Atlas currently uses the BAAI/bge-base-en-v1.5 embedding model. The model produces 768-dimensional vectors. Embeddings are normalized before being added to the vector store so that similarity can be interpreted consistently.",
+    "page": 2,
+    "source": "atlas-handbook.pdf"
+  },
+  {
+    "id": "atlas-handbook-004",
+    "chunk_number": 4,
+    "start_index": 711,
+    "end_index": 959,
+    "text": "The vector store uses FAISS for dense similarity search. Each vector is associated with chunk metadata so a retrieval result can be mapped back to its source document, page, and text. The persisted index and metadata are expected to contain the same number of entries.",
+    "page": 2,
+    "source": "atlas-handbook.pdf"
+  },
+  {
+    "id": "atlas-handbook-005",
+    "chunk_number": 5,
+    "start_index": 960,
+    "end_index": 1202,
+    "text": "The generation layer is provider-independent. The current local implementation uses Qwen/Qwen2.5-0.5B through Hugging Face. The LLM interface is separated from the RAG pipeline so that another model or provider can be introduced without rewriting retrieval.",
+    "page": 3,
+    "source": "atlas-handbook.pdf"
+  },
+  {
+    "id": "atlas-handbook-006",
+    "chunk_number": 6,
+    "start_index": 1203,
+    "end_index": 1452,
+    "text": "The command-line interface separates indexing from querying. A reset index rebuilds the retrieval state from the available chunked documents. Incremental indexing is intended to avoid reprocessing unchanged source documents. Querying loads the existing retrieval state and performs read-only retrieval and generation.",
+    "page": 3,
+    "source": "atlas-handbook.pdf"
+  }
+]
