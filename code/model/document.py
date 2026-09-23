@@ -21,4 +21,4 @@ class Chunk:
 @dataclass(slots=True, frozen=True)
 class EmbeddedChunk:
     chunk: Chunk
-    embedding: np.ndarry
+    embedding: np.ndarray
