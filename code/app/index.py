@@ -1,5 +1,6 @@
 import logging
 
+from code.app.config import CHUNKED_DATA_FOLDER_PATH, DEVICE, EMBEDDING_BATCH_SIZE, EMBEDDING_MODEL, INDEX_FILE, INDEXING_BATCH_SIZE, INDEX_METADATA_FILE
 from ingestion.index import Indexer
 from embeddings.embedder import Embedder
 from vector_store.vector_store import FAISSVectorStore
@@ -10,18 +11,6 @@ logging.basicConfig(
     format="%(asctime)s | %(levelname)s | %(name)s | %(message)s"
 )
 logger = logging.getLogger(__name__)
-
-
-CHUNKED_DATA_FOLDER_PATH = "../Data/chunked"
-EMBEDDING_MODEL = 'BAAI/bge-base-en-v1.5' 
-
-INDEX_FILE = "faiss_vector_store_index.faiss"
-METADATA_FILE = "faiss_vector_store_metadata.json"
-
-DEVICE = get_device()
-
-INDEXING_BATCH_SIZE = 200
-EMBEDDING_BATCH_SIZE = 16
 
 def main(
     embedding_model: str,
@@ -60,7 +49,7 @@ if __name__ == "__main__":
     main(
         embedding_model=EMBEDDING_MODEL,
         embedding_index_file=INDEX_FILE,
-        embedding_metadata_file=METADATA_FILE,
+        embedding_metadata_file=INDEX_METADATA_FILE,
         embedding_batch_size=EMBEDDING_BATCH_SIZE,
         indexing_batch_size=INDEXING_BATCH_SIZE,
         chunked_data_folder_path=CHUNKED_DATA_FOLDER_PATH,

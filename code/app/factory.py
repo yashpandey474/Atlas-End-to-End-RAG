@@ -18,16 +18,13 @@ from vector_store.vector_store import FAISSVectorStore
 logger = logging.getLogger(__name__)
 
 def create_pipeline(
-    llm_provider: LLMProvider = LLMProvider.HUGGING_FACE,
-    llm_generation_config: LLMGenerationConfig = LLMGenerationConfig(
-        temperature=0,
-        max_new_tokens=512
-    ),
-    llm_model: str = "Qwen/Qwen2.5-0.5B",
-    embedding_model: str = 'BAAI/bge-base-en-v1.5',
-    embedder_index_file: str =  "faiss_vector_store_index.faiss",
-    embedder_metadata_file: str = "faiss_vector_store_metadata.json",
-    device: str = "cpu"
+    llm_provider: LLMProvider,
+    llm_generation_config: LLMGenerationConfig,
+    llm_model: str,
+    embedding_model: str,
+    embedder_index_file: str,
+    embedder_metadata_file: str,
+    device: str
 ) -> RAGPipeline:
     prompt_builder: PromptBuilder = PromptBuilder(
         prompt_template=DEFAULT_PROMPT_TEMPLATE
