@@ -26,6 +26,6 @@ def read_from_json(file_path: str):
 
     return data
 
-def write_to_json(file_path: str, to_write: dict):
+def write_to_json(file_path: str, to_write: dict | list):
     with open(file_path, "w") as f:
         json.dump(to_write, f, indent=4)

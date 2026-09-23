@@ -1,9 +1,12 @@
 import fitz
 from pathlib import Path
+from code.utils.file_utils import write_to_json
 from model.document import Document
 import json
 from dataclasses import asdict
+import logging
 
+logger = logging.getLogger(__name__)
 
 class Parser:
     def parse_pdf(self, pdf_filepath: str, pdf_filename: str) -> list[Document]:
@@ -51,13 +54,12 @@ class Parser:
                 pdf_documents = self.parse_pdf(raw_data_filepath, f.name)
 
                 if not pdf_documents:
-                    print(f"Could not parse any documents for file: {raw_data_filepath}")
+                    logger.error(f"Could not parse any documents for file: {raw_data_filepath}")
                     continue
 
                 # save into json
                 processed_data_filepath = processed_data_folderpath + "/" + pdf_documents[0].source[:-3] + "json"
 
-                with open(processed_data_filepath, "w") as f:
-                    json.dump([asdict(doc) for doc in pdf_documents], f)
+                write_to_json(processed_data_filepath, [[asdict(doc) for doc in pdf_documents]])
 
-                print(f"Saved {len(pdf_documents)} to {processed_data_filepath}")
+                logger.info(f"Saved {len(pdf_documents)} to {processed_data_filepath}")
