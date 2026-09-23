@@ -1,7 +1,7 @@
 import faiss
 import numpy as np
 import pytest
-from utils.file_utils import check_file_exists
+from code.utils.file_utils import check_file_exists
 import logging
 
 logging.basicConfig(

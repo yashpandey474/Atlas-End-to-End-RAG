@@ -1,4 +1,4 @@
-from embeddings.embedder import Embedder
+from code.embeddings.embedder import Embedder
 
 print("Creating embedder")
 

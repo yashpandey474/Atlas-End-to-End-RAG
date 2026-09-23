@@ -1,4 +1,4 @@
-from embeddings.embedder import Embedder
+from code.embeddings.embedder import Embedder
 import faiss
 import numpy as np
 
@@ -9,8 +9,6 @@ embedder = Embedder(
     model_name="BAAI/bge-base-en-v1.5",
     device="cpu",
 )
-
-
 
 print("Before creating embedding")
 
